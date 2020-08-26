@@ -3,8 +3,11 @@ from ..items import AmazonItem
 class AmazonSpider(scrapy.Spider):
     name = 'amazon'
     start_urls = [
-        'https://www.amazon.in/gp/bestsellers/books/?ie=UTF8&ref_=sv_ba_3'
+        'https://www.amazon.in/gp/bestsellers/books/ref=zg_bs_pg_2?ie=UTF8&pg=1'
     ]
+
+    def __init__(self):
+        self.page_number = 1
 
     def parse(self, response):
 
@@ -22,4 +25,10 @@ class AmazonSpider(scrapy.Spider):
             items['book_img_link'] = book_img_link
 
             yield items
+        
+        last_page = response.css('.a-last').css('.a-disabled').extract()
+        if last_page is None or last_page == []:
+            self.page_number += 1
+            page_link = "https://www.amazon.in/gp/bestsellers/books/ref=zg_bs_pg_2?ie=UTF8&pg=" + str(self.page_number)
+            yield response.follow(page_link, callback=self.parse)
         
