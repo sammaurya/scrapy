@@ -16,3 +16,12 @@ class JokeItem(scrapy.Item):
         input_processor=MapCompose(remove_tags, remove_whitespace),
         output_processor=TakeFirst()
     )
+
+class AmazonItem(scrapy.Item):
+
+    book_name = scrapy.Field()
+    book_author = scrapy.Field()
+    book_price = scrapy.Field(
+        input_processor=MapCompose(remove_tags)
+    )
+    book_img_link = scrapy.Field()
